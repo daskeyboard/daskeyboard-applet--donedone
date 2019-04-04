@@ -1,0 +1,94 @@
+{
+  "name": "daskeyboard-applet--donedone",
+  "displayName": "DoneDone",
+  "version": "1.0.0",
+  "description": "Displays issues activity.",
+  "longDescription": "Keep an eye on the issues on your Q keyboard!",
+  "officialProductName": "DoneDone",
+  "appUrl": "",
+  "isSingleton": false,
+  "videoUrl": "",
+  "icon": "assets/icon.png",
+  "image": "assets/image-missing.png",
+  "publisher": "Das Keyboard",
+  "authorName": "Das Keyboard",
+  "authorUrl": "https://twitter.com/daskeyboard",
+  "issuesUrl": "https://github.com/daskeyboard/daskeyboard-applet--donedone/issues",
+  "homePageUrl": "https://github.com/daskeyboard/daskeyboard-applet--donedone",
+  "developerRepoUrl": "https://github.com/daskeyboard/daskeyboard-applet--donedone",
+  "licenseUrl": "http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+  "changelogUrl": "CHANGELOG.md",
+  "license": "MIT",
+  "readMeUrl": "README.md",
+  "readMeEndUserUrl": "README_ENDUSER.md",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "engines": {
+    "das-keyboard-q": "3.2.3"
+  },
+  "dependencies": {
+    "daskeyboard-applet": "^2.11.4",
+    "mocha": "^5.2.0",
+    "request": "^2.88.0",
+    "dateformat": "^3.0.3",
+    "btoa": "1.2.1"
+  },
+  "qConfig": {
+    "geometry": {
+      "width": 1,
+      "height": 1,
+      "defaults": {
+        "origin": {
+          "x": 0,
+          "y": 1
+        }
+      }
+    },
+    "authorization": {
+      "type": "apiKey",
+      "hint": "Your DoneDone API key can be found in your user profile.",
+      "supportUrl": "https://www.getdonedone.com/"
+    },
+    "questions": [
+      {
+        "key": "username",
+        "label": "Enter username",
+        "help": "",
+        "required": true,
+        "placeholder": "e.g: Doctor",
+        "order": 1,
+        "controlType": "textbox"
+      },
+      {
+        "key": "subdomain",
+        "label": "Enter subdomain",
+        "help": "Your subdomain is inside the url when you are logged in e.g: https://<YOUR_SUBDOMAIN>.mydonedone.com/IssueTracker",
+        "required": true,
+        "placeholder": "e.g: daskeyboard",
+        "order": 2,
+        "controlType": "textbox"
+      },
+      {
+        "key": "color",
+        "label": "Select a color",
+        "help": "",
+        "required": true,
+        "order": 3,
+        "controlType": "color",
+        "value": "#ff0000"
+      },
+      {
+        "key": "effect",
+        "label": "Select a notification effect",
+        "help": "",
+        "required": true,
+        "order": 4,
+        "controlType": "effect",
+        "value": "BLINK"
+      }
+    ]
+  }
+}
