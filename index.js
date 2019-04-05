@@ -97,9 +97,9 @@ class DoneDone extends q.DesktopApp {
         logger.info("Response empty when getting all issues.");
       }
       else {
-
+        
+        // Extract the issues from the response
         for (let issue of body.issues) {
-          // Extract the issues from the response
 
           // If there is an update on a issue AND the user is not the updater.
           if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
