@@ -113,8 +113,8 @@ class DoneDone extends q.DesktopApp {
           logger.info("CHECKING  "+issue.last_updated_on.slice(6,18));
           logger.info("NOWWW  "+this.now);
 
-
-          if(issue.last_updated_on.slice(6,18) > this.now){
+          if( (issue.last_updated_on.slice(6,18) > this.now) ){
+          // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
             logger.info("Issue UDPATED");
             // Need to send a signal
             triggered = true;
