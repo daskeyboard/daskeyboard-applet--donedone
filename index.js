@@ -89,6 +89,7 @@ class DoneDone extends q.DesktopApp {
     let triggered = false;
     let message = [];
     let url;
+    let issueState;
 
     try {
       const body = await request.get({
@@ -116,7 +117,15 @@ class DoneDone extends q.DesktopApp {
 
           if( (issue.last_updated_on.slice(6,18) > this.now) ){
           // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
-            logger.info("Get issue update");
+
+            // Check which kind of update is it
+            if(issue.last_updated_on == issue.created_on){
+              issueState = "created";
+              logger.info("Get issue created");
+            }else{
+              issueState = "updated";
+              logger.info("Get issue udpated");
+            }
 
             // Check if a signal is already set up
             // in order to change the url
@@ -130,7 +139,7 @@ class DoneDone extends q.DesktopApp {
             triggered = true;
 
             // Update signal's message
-            message.push(`${issue.title} issue has been updated. Check ${issue.project.name} project.`);
+            message.push(`${issue.title} issue has been ${issueState}. Check ${issue.project.name} project.`);
 
           }
         }
