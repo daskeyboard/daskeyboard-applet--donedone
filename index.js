@@ -31,8 +31,8 @@ class DoneDone extends q.DesktopApp {
 
   constructor() {
     super();
-    // run every 30 sec
-    this.pollingInterval = 30 * 1000;
+    // run every 20 sec
+    this.pollingInterval = 20 * 1000;
   }
 
   async applyConfig() {
@@ -68,6 +68,35 @@ class DoneDone extends q.DesktopApp {
         logger.error(
           `Got error sending request to service: ${JSON.stringify(error)}`);
       });
+
+      if(this.config.option == "created"){
+        logger.info("Need to initialize number of issue.")
+        await request.get({
+          url: `${this.baseUrl}/issues/all.json`,
+          headers: this.serviceHeaders,
+          json: true
+        }).then((body) => {
+          this.issuesNumber = body.total_issues;
+          logger.info(`Initialize with ${this.issuesNumber} issues number.`);
+        });
+      }
+
+      if(this.config.option == "closed"){
+        logger.info("Need to initialize the state of the issues.")
+        // Array to keep in mind the issues state.
+        this.status = {};
+        await request.get({
+          url: `${this.baseUrl}/issues/all.json`,
+          headers: this.serviceHeaders,
+          json: true
+        }).then((body) => {
+          for (let issue of body.issues) {
+            this.status[issue.title] = issue.status.name;
+          }
+          logger.info("This is the initialized array of issues status: "+JSON.stringify(this.status));
+        });
+      }
+
     }else{
       logger.info("Subdomain is undefined. Configuration is not done yet");
     }
@@ -97,38 +126,78 @@ class DoneDone extends q.DesktopApp {
         logger.info("Response empty when getting all issues.");
       }
       else {
-        
-        // Extract the issues from the response
-        for (let issue of body.issues) {
 
-          // If there is an update on a issue AND the user is not the updater.
-          if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
-
-            // Check which kind of update is it
-            if(issue.last_updated_on == issue.created_on){
-              issueState = "created";
-              logger.info("Get issue created");
-            }else{
-              issueState = "updated";
-              logger.info("Get issue udpated");
+        switch(this.config.option){
+          case "created":
+            logger.info("CREATED OPTION");
+            if(body.total_issues>this.issuesNumber){
+              // Need to send a signal
+              triggered = true;
+              // Test if there is several issues
+              if(body.total_issues-1>this.issuesNumber){
+                // Update signal's message
+                message.push(`Issues created.`);
+                url = `https://${this.subdomain}.mydonedone.com/issuetracker`;
+              }else{
+                // Update signal's message
+                message.push(`${body.issues[0].title} issue created. Check ${body.issues[0].project.name} project.`);
+                url = `https://${this.subdomain}.mydonedone.com/issuetracker/projects/${body.issues[0].project.id}/issues/${body.issues[0].order_number}`;
+              }
             }
+            // Updated number of issues (if issue is deleted)
+            this.issuesNumber = body.total_issues;
 
-            // Update signal's message
-            message.push(`${issue.title} issue has been ${issueState}. Check ${issue.project.name} project.`);
+            break;
+          case "closed":
+            logger.info("CLOSED OPTION");
+            // Extract the issues from the response
+            for (let issue of body.issues) {
+              // Check previous status with new status
+              logger.info("PREVIOUS STATUS: "+this.status[issue.title]);
+              logger.info("CURRENT STATUS: "+issue.status.name);
 
-            // Check if a signal is already set up
-            // in order to change the url
-            if(triggered){
-              url = `https://${this.subdomain}.mydonedone.com/issuetracker`
-            }else{
-              url = `https://${this.subdomain}.mydonedone.com/issuetracker/projects/${issue.project.id}/issues/${issue.order_number}`
+              if((this.status[issue.title] != "Closed" ) && ( issue.status.name == "Closed")){
+                logger.info("CLOSEEEEDDD ISSUEEEEE");
+                message.push(`${issue.title} issue closed. Check ${issue.project.name} project.`);
+                // Check if a signal is already set up
+                // in order to change the url
+                if(triggered){
+                  url = `https://${this.subdomain}.mydonedone.com/issuetracker`;
+                }else{
+                  url = `https://${this.subdomain}.mydonedone.com/issuetracker/projects/${issue.project.id}/issues/${issue.order_number}`;
+                }
+                // Need to send a signal
+                triggered = true;
+              }
+              // Updated previous status
+              this.status[issue.title]=issue.status.name;
             }
-
-            // Need to send a signal
-            triggered = true;
-
-          }
+            break;
+          case "updated":
+            logger.info("UPDATED OPTION");
+            // Extract the issues from the response
+            for (let issue of body.issues) {
+              // If there is an update on a issue AND the user is not the updater.
+              if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
+                // Update signal's message
+                message.push(`${issue.title} issue updated. Check ${issue.project.name} project.`);
+                // Check if a signal is already set up
+                // in order to change the url
+                if(triggered){
+                  url = `https://${this.subdomain}.mydonedone.com/issuetracker`;
+                }else{
+                  url = `https://${this.subdomain}.mydonedone.com/issuetracker/projects/${issue.project.id}/issues/${issue.order_number}`;
+                }
+                // Need to send a signal
+                triggered = true;
+              }
+            }
+            break;
+          default:
+            logger.error("Config issue.")
         }
+        
+
 
         // If we need to send a signal with one or several updates.
         if(triggered){
