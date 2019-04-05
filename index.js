@@ -14,10 +14,10 @@ const baseUrl1 = 'https://';
 const baseUrl2 = '.mydonedone.com/issuetracker/api/v2'
 
 // Get the current time
-function getUtcTime() {
-  var now = new Date();
-  var utcTime = dateFormat(now, "isoUtcDateTime");
-  return utcTime;
+function getTime() {
+  var now =  new Date().getTime()/1000;
+  var nowWithoutDot = `${now}`.replace('.','');
+  return nowWithoutDot;
 }
 
 // Test if an object is empty
@@ -47,9 +47,8 @@ class DoneDone extends q.DesktopApp {
     
     if(this.subdomain){
 
-      // Create time variable
-      this.now = new Date().getTime()/1000;
-      this.now = `${this.now}`.replace('.','');
+      // Create and initialize time variable
+      this.now = getTime();
 
       this.baseUrl = baseUrl1 + this.subdomain + baseUrl2;
       this.params = `${this.config.username}:${this.authorization.apiKey}`;
@@ -86,7 +85,9 @@ class DoneDone extends q.DesktopApp {
 
   // call this function every pollingInterval
   async run() {
-    let signal;
+    let signal = null;
+    let triggered = false;
+    let message = [];
 
     try {
       const body = await request.get({
@@ -103,7 +104,6 @@ class DoneDone extends q.DesktopApp {
       var isBodyEmpty = isEmpty(body) || (body === "[]");
       if (isBodyEmpty) {
         logger.info("Response empty when getting all issues.");
-        signal = null;
       }
       else {
 
@@ -116,20 +116,26 @@ class DoneDone extends q.DesktopApp {
 
           if(issue.last_updated_on.slice(6,18) > this.now){
             logger.info("Issue UDPATED");
-            signal = new q.Signal({
-              points: [[new q.Point(this.config.color, this.config.effect)]],
-              name: "DoneDone",
-              message: "TODO",
-              link: {
-                url: "https://www.google.com",
-                label: 'Show in DoneDone',
-              }
-            });
+            // Need to send a signal
+            triggered = true;
+
             // Updated time
-            this.now = new Date().getTime()/1000;
-            this.now = `${this.now}`.replace('.','');
+            this.now = getTime();
 
           }
+        }
+
+        if(triggered){
+          signal = new q.Signal({
+            points: [[new q.Point(this.config.color, this.config.effect)]],
+            name: "DoneDone",
+            message: "TODO",
+            link: {
+              url: "https://www.google.com",
+              label: 'Show in DoneDone',
+            }
+          });
+
         }
 
 
