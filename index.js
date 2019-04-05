@@ -109,7 +109,6 @@ class DoneDone extends q.DesktopApp {
     let triggered = false;
     let message = [];
     let url;
-    let issueState;
 
     try {
       const body = await request.get({
@@ -135,10 +134,14 @@ class DoneDone extends q.DesktopApp {
               triggered = true;
               // Test if there is several issues
               if(body.total_issues-1>this.issuesNumber){
+                // Several created issues here
+
                 // Update signal's message
                 message.push(`Issues created.`);
                 url = `https://${this.subdomain}.mydonedone.com/issuetracker`;
               }else{
+                // Only one created issue here
+                
                 // Update signal's message
                 message.push(`${body.issues[0].title} issue created. Check ${body.issues[0].project.name} project.`);
                 url = `https://${this.subdomain}.mydonedone.com/issuetracker/projects/${body.issues[0].project.id}/issues/${body.issues[0].order_number}`;
@@ -197,8 +200,6 @@ class DoneDone extends q.DesktopApp {
             logger.error("Config issue.")
         }
         
-
-
         // If we need to send a signal with one or several updates.
         if(triggered){
 
