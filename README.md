@@ -1,8 +1,8 @@
 # Q Applet: DoneDone
 
-Displays new tickets activity on a Das Keyboard Q Series.
+Displays all issues activity (new comment, priority, status, etc.)
 
-DoneDone is the #1 help desk & ticket tracking software to provide great customer support.
+From planning, to coding, to testing, to customer support, DoneDone is the straightforward bug and issue tracker.
 
 For more information visit <https://getdonedone.com/>.
 
