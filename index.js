@@ -34,8 +34,8 @@ class DoneDone extends q.DesktopApp {
 
   constructor() {
     super();
-    // run every 10 sec
-    this.pollingInterval = 10 * 1000;
+    // run every 30 sec
+    this.pollingInterval = 30 * 1000;
   }
 
   async applyConfig() {
@@ -115,8 +115,8 @@ class DoneDone extends q.DesktopApp {
           logger.info("CHECKING  "+issue.last_updated_on.slice(6,18));
           logger.info("NOWWW  "+this.now);
 
-          if( (issue.last_updated_on.slice(6,18) > this.now) ){
-          // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
+          // If there is an update on a issue AND the user is not the updater.
+          if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
 
             // Check which kind of update is it
             if(issue.last_updated_on == issue.created_on){
