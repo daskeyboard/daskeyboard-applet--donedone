@@ -1,11 +1,8 @@
 // Library to send signal to Q keyboards
 const q = require('daskeyboard-applet');
-
 // Library to send request to API
 const request = require('request-promise');
-
-var dateFormat = require('dateformat');
-
+// Library to convert to Base64
 const btoa = require('btoa');
 
 const logger = q.logger;
@@ -58,19 +55,14 @@ class DoneDone extends q.DesktopApp {
         "Authorization": `Basic ${this.paramsBase64Encoded}`,
       }
 
-      logger.info("This is subdomain: "+this.subdomain);
-      logger.info("This is the base Url: "+this.baseUrl);
-
       // Get the user ID
       await request.get({
         url: `${this.baseUrl}/people/me.json`,
         headers: this.serviceHeaders,
         json: true
       }).then((body) => {
-        logger.info("Let's configure the user ID.");
-        logger.info("This is the body: "+ JSON.stringify(body));
         this.userId = body.id;
-        logger.info("This is the userID: "+ this.userId);
+        logger.info("Got DoneDone userID: "+ this.userId);
       })
       .catch(error => {
         logger.error(
@@ -79,7 +71,6 @@ class DoneDone extends q.DesktopApp {
     }else{
       logger.info("Subdomain is undefined. Configuration is not done yet");
     }
-
 
   }
 
@@ -98,9 +89,7 @@ class DoneDone extends q.DesktopApp {
         json: true
       });
 
-      logger.info("Looking for DoneDone issues");
-      logger.info("This is the date " + this.now);
-      logger.info("Issues response: " + JSON.stringify(body));
+      logger.info("DoneDone running.");
 
       // Test if there is something inside the response
       var isBodyEmpty = isEmpty(body) || (body === "[]");
@@ -110,12 +99,10 @@ class DoneDone extends q.DesktopApp {
       else {
 
         for (let issue of body.issues) {
-          // extract the issues from the response
-          logger.info("This is how a issue looks: " + JSON.stringify(issue));
+          // Extract the issues from the response
 
           // If there is an update on a issue AND the user is not the updater.
-          // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) && (issue.status.name != "Closed") ){
-          if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.status.name != "Closed") ){
+          if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
 
             // Check which kind of update is it
             if(issue.last_updated_on == issue.created_on){
@@ -125,6 +112,9 @@ class DoneDone extends q.DesktopApp {
               issueState = "updated";
               logger.info("Get issue udpated");
             }
+
+            // Update signal's message
+            message.push(`${issue.title} issue has been ${issueState}. Check ${issue.project.name} project.`);
 
             // Check if a signal is already set up
             // in order to change the url
@@ -136,9 +126,6 @@ class DoneDone extends q.DesktopApp {
 
             // Need to send a signal
             triggered = true;
-
-            // Update signal's message
-            message.push(`${issue.title} issue has been ${issueState}. Check ${issue.project.name} project.`);
 
           }
         }
@@ -161,7 +148,6 @@ class DoneDone extends q.DesktopApp {
           });
 
         }
-
 
         return signal;
       }
