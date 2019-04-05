@@ -130,7 +130,7 @@ class DoneDone extends q.DesktopApp {
             triggered = true;
 
             // Update signal's message
-            message.push(`${issue.title} has been updated. Check ${issue.project.name}`);
+            message.push(`${issue.title} issue has been updated. Check ${issue.project.name} project.`);
 
           }
         }
