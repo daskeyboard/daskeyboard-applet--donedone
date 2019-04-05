@@ -57,7 +57,7 @@
         "label": "Enter username",
         "help": "Your username can be found in the DoneDone profile.",
         "required": true,
-        "placeholder": "e.g: Doctor",
+        "placeholder": "e.g: JohnDoe",
         "order": 1,
         "controlType": "textbox"
       },
@@ -71,11 +71,33 @@
         "controlType": "textbox"
       },
       {
+        "key": "option",
+        "label": "Choose an alert",
+        "required": true,
+        "order": 3,
+        "controlType": "dropdown",
+        "value": "nuut",
+        "options": [
+          {
+            "key": "created",
+            "value": "Created issues"
+          },
+          {
+            "key": "closed",
+            "value": "Closed issues"
+          },
+          {
+            "key": "updated",
+            "value": "Updated issues"
+          }
+        ]
+      },
+      {
         "key": "color",
         "label": "Select a color",
         "help": "",
         "required": true,
-        "order": 3,
+        "order": 4,
         "controlType": "color",
         "value": "#ff0000"
       },
@@ -84,7 +106,7 @@
         "label": "Select a notification effect",
         "help": "",
         "required": true,
-        "order": 4,
+        "order": 5,
         "controlType": "effect",
         "value": "BLINK"
       }
