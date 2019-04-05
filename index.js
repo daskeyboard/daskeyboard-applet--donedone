@@ -114,8 +114,8 @@ class DoneDone extends q.DesktopApp {
           logger.info("This is how a issue looks: " + JSON.stringify(issue));
 
           // If there is an update on a issue AND the user is not the updater.
-          // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
-          if( (issue.last_updated_on.slice(6,18) > this.now) ){
+          // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) && (issue.status.name != "Closed") ){
+          if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.status.name != "Closed") ){
 
             // Check which kind of update is it
             if(issue.last_updated_on == issue.created_on){
