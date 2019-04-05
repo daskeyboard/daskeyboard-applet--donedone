@@ -112,11 +112,10 @@ class DoneDone extends q.DesktopApp {
         for (let issue of body.issues) {
           // extract the issues from the response
           logger.info("This is how a issue looks: " + JSON.stringify(issue));
-          logger.info("CHECKING  "+issue.last_updated_on.slice(6,18));
-          logger.info("NOWWW  "+this.now);
 
           // If there is an update on a issue AND the user is not the updater.
-          if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
+          // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
+          if( (issue.last_updated_on.slice(6,18) > this.now) ){
 
             // Check which kind of update is it
             if(issue.last_updated_on == issue.created_on){
