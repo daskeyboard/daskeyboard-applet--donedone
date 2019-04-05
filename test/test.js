@@ -95,7 +95,6 @@ describe('DoneDone', () => {
   describe('#run()', () => {
     it('runs', async function () {
       return makeApp().then(async app => {
-        // app.timestamp = new Date('2018-01-17T03:24:00').toISOString();
         return app.run().then((signal) => {
           assert.ok(signal);
         }).catch((error) => {
