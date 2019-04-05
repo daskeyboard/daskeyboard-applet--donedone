@@ -56,7 +56,7 @@
       {
         "key": "username",
         "label": "Enter username",
-        "help": "",
+        "help": "Your username can be found in the DoneDone profile.",
         "required": true,
         "placeholder": "e.g: Doctor",
         "order": 1,
