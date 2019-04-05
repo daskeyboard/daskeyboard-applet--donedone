@@ -88,6 +88,7 @@ class DoneDone extends q.DesktopApp {
     let signal = null;
     let triggered = false;
     let message = [];
+    let url;
 
     try {
       const body = await request.get({
@@ -115,23 +116,38 @@ class DoneDone extends q.DesktopApp {
 
           if( (issue.last_updated_on.slice(6,18) > this.now) ){
           // if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
-            logger.info("Issue UDPATED");
+            logger.info("Get issue update");
+
+            // Check if a signal is already set up
+            // in order to change the url
+            if(triggered){
+              url = `https://${this.subdomain}.mydonedone.com/issuetracker`
+            }else{
+              url = `https://${this.subdomain}.mydonedone.com/issuetracker/projects/${issue.project.id}/issues/${issue.order_number}`
+            }
+
             // Need to send a signal
             triggered = true;
 
-            // Updated time
-            this.now = getTime();
+            // Update signal's message
+            message.push(`${issue.title} has been updated. Check ${issue.project.name}`);
 
           }
         }
 
+        // If we need to send a signal with one or several updates.
         if(triggered){
+
+          // Updated time
+          this.now = getTime();
+
+          // Create signal
           signal = new q.Signal({
             points: [[new q.Point(this.config.color, this.config.effect)]],
             name: "DoneDone",
-            message: "TODO",
+            message: message.join("<br>"),
             link: {
-              url: "https://www.google.com",
+              url: url,
               label: 'Show in DoneDone',
             }
           });
