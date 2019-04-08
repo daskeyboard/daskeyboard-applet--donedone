@@ -130,6 +130,8 @@ class DoneDone extends q.DesktopApp {
           case "created":
             logger.info("CREATED OPTION");
             if(body.total_issues>this.issuesNumber){
+              logger.info("CREATED ISSUE");
+
               // Need to send a signal
               triggered = true;
               // Test if there is several issues
@@ -156,8 +158,8 @@ class DoneDone extends q.DesktopApp {
             // Extract the issues from the response
             for (let issue of body.issues) {
               // Check previous status with new status
-              logger.info("PREVIOUS STATUS: "+this.status[issue.title]);
-              logger.info("CURRENT STATUS: "+issue.status.name);
+              logger.info("Previous status: "+this.status[issue.title]);
+              logger.info("Current status: "+issue.status.name);
 
               if((this.status[issue.title] != "Closed" ) && ( issue.status.name == "Closed")){
                 logger.info("CLOSEEEEDDD ISSUEEEEE");
@@ -182,6 +184,8 @@ class DoneDone extends q.DesktopApp {
             for (let issue of body.issues) {
               // If there is an update on a issue AND the user is not the updater.
               if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
+                logger.info("UPDATED ISSUEEEEE");
+
                 // Update signal's message
                 message.push(`${issue.title} issue updated. Check ${issue.project.name} project.`);
                 // Check if a signal is already set up
