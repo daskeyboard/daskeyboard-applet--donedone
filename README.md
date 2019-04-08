@@ -1,6 +1,6 @@
 # Q Applet: DoneDone
 
-This applet allows to choose to display several options of issues activity:
+This applet allows to display a chosen option of issues activity:
 
 - New opened issues
 - New closed issues
