@@ -1,10 +1,10 @@
 # DoneDone
 
-This applet allows to display a chosen option of issues activity:
+This applet displays issues updates based on activity:
 
-- Opened
-- Closed
-- Updated (new comment, priority, status, etc.)
+- New opened issues
+- New closed issues
+- New updated issues (new comment, priority, status, etc.)
 
 From planning, to coding, to testing, to customer support, DoneDone is the straightforward bug and issue tracker.
 
