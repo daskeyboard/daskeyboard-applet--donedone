@@ -76,19 +76,19 @@
         "required": true,
         "order": 3,
         "controlType": "dropdown",
-        "value": "nuut",
+        "value": "created",
         "options": [
           {
             "key": "created",
-            "value": "Created issues"
+            "value": "New created issues"
           },
           {
             "key": "closed",
-            "value": "Closed issues"
+            "value": "New closed issues"
           },
           {
             "key": "updated",
-            "value": "Updated issues"
+            "value": "New update on issues"
           }
         ]
       },
