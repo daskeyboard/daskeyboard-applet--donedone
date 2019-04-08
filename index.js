@@ -160,8 +160,8 @@ class DoneDone extends q.DesktopApp {
               // Check previous status with new status
               logger.info("Previous status: "+this.status[issue.title]);
               logger.info("Current status: "+issue.status.name);
-
-              if((this.status[issue.title] != "Closed" ) && ( issue.status.name == "Closed")){
+              // If there is a closed issue AND the user is not the updater.
+              if((this.status[issue.title] != "Closed" ) && ( issue.status.name == "Closed") && (issue.last_updater.id != this.userId)){
                 logger.info("CLOSEEEEDDD ISSUEEEEE");
                 message.push(`${issue.title} issue closed. Check ${issue.project.name} project.`);
                 // Check if a signal is already set up
