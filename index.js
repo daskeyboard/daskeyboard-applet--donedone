@@ -110,6 +110,8 @@ class DoneDone extends q.DesktopApp {
     let message = [];
     let url;
 
+    logger.info("DoneDone running.");
+
     try {
       const body = await request.get({
         url: `${this.baseUrl}/issues/all.json`,
@@ -117,7 +119,6 @@ class DoneDone extends q.DesktopApp {
         json: true
       });
 
-      logger.info("DoneDone running.");
 
       // Test if there is something inside the response
       var isBodyEmpty = isEmpty(body) || (body === "[]");
@@ -128,9 +129,9 @@ class DoneDone extends q.DesktopApp {
 
         switch(this.config.option){
           case "created":
-            logger.info("CREATED OPTION");
-            if(body.total_issues>this.issuesNumber){
-              logger.info("CREATED ISSUE");
+
+          if(body.total_issues>this.issuesNumber){
+              logger.info("Created issue.");
 
               // Need to send a signal
               triggered = true;
@@ -139,7 +140,7 @@ class DoneDone extends q.DesktopApp {
                 // Several created issues here
 
                 // Update signal's message
-                message.push(`Issues created.`);
+                message.push(`Created issues.`);
                 url = `https://${this.subdomain}.mydonedone.com/issuetracker`;
               }else{
                 // Only one created issue here
@@ -154,15 +155,17 @@ class DoneDone extends q.DesktopApp {
 
             break;
           case "closed":
-            logger.info("CLOSED OPTION");
+
             // Extract the issues from the response
             for (let issue of body.issues) {
               // Check previous status with new status
-              logger.info("Previous status: "+this.status[issue.title]);
-              logger.info("Current status: "+issue.status.name);
+
+              // logger.info("Previous status: "+this.status[issue.title]);
+              // logger.info("Current status: "+issue.status.name);
+
               // If there is a closed issue AND the user is not the updater.
               if((this.status[issue.title] != "Closed" ) && ( issue.status.name == "Closed") && (issue.last_updater.id != this.userId)){
-                logger.info("CLOSEEEEDDD ISSUEEEEE");
+                logger.info("Closed issue.");
                 message.push(`${issue.title} issue closed. Check ${issue.project.name} project.`);
                 // Check if a signal is already set up
                 // in order to change the url
@@ -179,12 +182,11 @@ class DoneDone extends q.DesktopApp {
             }
             break;
           case "updated":
-            logger.info("UPDATED OPTION");
             // Extract the issues from the response
             for (let issue of body.issues) {
               // If there is an update on a issue AND the user is not the updater.
               if( (issue.last_updated_on.slice(6,18) > this.now) && (issue.last_updater.id != this.userId) ){
-                logger.info("UPDATED ISSUEEEEE");
+                logger.info("Updated issue.");
 
                 // Update signal's message
                 message.push(`${issue.title} issue updated. Check ${issue.project.name} project.`);
@@ -228,8 +230,13 @@ class DoneDone extends q.DesktopApp {
     }
     catch (error) {
       logger.error(`Got error sending request to service: ${JSON.stringify(error)}`);
+      if(`${error.message}`.includes("getaddrinfo")){
+        return q.Signal.error(
+          'The DoneDone service returned an error. <b>Please check your internet connection</b>.'
+        );
+      }
       return q.Signal.error([
-        'The DoneDone service returned an error. Please check your API key and account.',
+        'The DoneDone service returned an error. <b>Please check your API key and account</b>.',
         `Detail: ${error.message}`
       ]);
     }
