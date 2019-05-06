@@ -99,7 +99,7 @@
         "required": true,
         "order": 4,
         "controlType": "color",
-        "value": "#ff0000"
+        "value": "#fa6123"
       },
       {
         "key": "effect",
