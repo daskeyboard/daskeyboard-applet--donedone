@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "daskeyboard-applet": "^2.11.4",
-    "mocha": "^5.2.0",
     "request": "^2.88.0",
     "btoa": "1.2.1"
   },
@@ -111,5 +110,8 @@
         "value": "BLINK"
       }
     ]
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
   }
 }
